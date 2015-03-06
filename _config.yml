@@ -10,10 +10,10 @@ url: http://pingqunnayang.github.io/
 # be the project name.
 # *** IMPORTANT: If your local "jekyll serve" throws errors change this to '' or
 #     run it like so: jekyll serve --baseurl=''
-baseurl: ''
+baseurl: /
 
 # This can be '' to hide the Github nav button
-github: 'pingqunnayng/pingqunnayang.github.io'
+github: 'pingqunnayang'
 
 # Set this to your UA-# value, or '' to disable the block completely
 gaaccount: ''
