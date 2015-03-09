@@ -1,0 +1,31 @@
+---
+layout: default
+---
+
+<script src="/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+
+<div id = "blogcategory" class="well">
+</div> 
+
+<script type="text/javascript">
+
+function GetQueryString(name) 
+{ 
+var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)"); 
+var r = window.location.search.substr(1).match(reg); 
+if (r!=null) return unescape(r[2]); return null; 
+} 
+
+var dataStr = '{ {% for cat in site.categories %}{% if cat[0] != site.categories.first[0] %},{% endif %}"{{ cat[0] }}":[{% for post in cat[1] %}{% if post != cat[1].first %},{% endif %}{"url":"{{post.url}}", "title":"{{post.title}}", "date":"{{post.date | date:"%d/%m/%Y"}}"}{% endfor %}]{% endfor %} }';
+data = JSON.parse(dataStr);
+curTag = GetQueryString("categoryName");
+archieves = data[curTag];
+var content = "<ul class=\"compact recent\">";
+$.each(archieves,
+function(i, item) {
+content += "<li></span><a href=\"" + item.url + "\">" + item.title + "</a></li>";
+});
+content += "</ul>";
+$("#blogcategory").append(content);
+</script>
+           

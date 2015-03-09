@@ -2,6 +2,16 @@
 {{ site.description }}
 </div>
 
+<div class='sidebar well category'>
+    <h1>Posts sort</h1>
+	<ul>
+    {% for category in site.categories %}  
+        <li class="category_list_item"><a href="/showCategory.html?categoryName={{ category | first }}">{{ category | first }}</a> ({{ category | last | size }})  
+        </li>  
+    {% endfor %}  
+	</ul>
+</div>
+
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
