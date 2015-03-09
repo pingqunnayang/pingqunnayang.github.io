@@ -2,7 +2,6 @@
 layout: post
 title: "Jekyll Clean Theme"
 date: 2014-08-22 16:25:06
-comments: false
 categories: [jekyll]
 ---
 

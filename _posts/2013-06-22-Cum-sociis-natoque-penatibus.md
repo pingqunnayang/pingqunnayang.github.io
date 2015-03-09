@@ -2,7 +2,6 @@
 layout: post
 title: "Cum sociis natoque penatibus"
 date: 2013-06-22 16:25:06
-comments: true
 categories: [github-page]
 ---
 
