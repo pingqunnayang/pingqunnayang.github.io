@@ -5,7 +5,7 @@ description: A jekyll theme
 
 # url is currently only used only for the RSS feed in feed.xml
 url: http://pingqunnayang.github.io/
-highlighter: rouge
+highlighter: pygments
 
 # baseurl will often be '', but for a project page on gh-pages, it needs to
 # be the project name.
@@ -23,7 +23,7 @@ gaaccount: ''
 # setting below must also be true. Individual posts can override 'comments' to
 # disable on a post-by-post basis
 disqus: ''
-#comments: true
+comments: true
 
 permalink: /:year/:month/:title
 paginate: 3
