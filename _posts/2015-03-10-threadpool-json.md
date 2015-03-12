@@ -4,14 +4,13 @@ title:  "threadpool"
 date:   2015-03-10 00:18:23 
 categories: threadpool
 ---
-
 之前项目中很多地方用到线程池，线程池的好处：
 >- 可以控制系统中线程的数量，根据系统的性能要求调整线程的数目。
 >- 减少创建和销毁线程的次数，提高服务器的工作效率。
 
 一个线程池的实现原理可以用如下一张图来描述：
 
-![Alt text](/image/threadpool.png)
+![Alt text](./1426073188527.png)
 （图1）
 > **流程：** 用户提交线程放到线程池的**Queue**中，线程池启动多个**Worker**线程监听**Queue**，如果**Queue**中有任务则获取并执行，没有则等待或销毁。
 
@@ -21,6 +20,7 @@ categories: threadpool
 >-  **线程池**的状态如何控制？如何关闭**线程池**？
 
 带着问题我们来看下java.util.concurrent.**ThreadPoolExecutor**是如何实现线程池的？**ThreadPoolExecutor**是ExecutorService的默认实现，**ThreadPoolExecutor**的构造函数如下：
+
 ```java
     public ThreadPoolExecutor(int corePoolSize,
                               int maximumPoolSize,
@@ -44,6 +44,7 @@ categories: threadpool
         this.handler = handler;
     }
 ```
+
 >- `corePoolSize:` 是核心线程的数量（图1中**worker**线程的数量）。
 >- `maximumPoolSize:` 是最大**worker**线程数。
 >- `keepAliveTime:` 当线程数大于核心时，此为终止空闲线程等待新任务的最长时间。
@@ -53,6 +54,7 @@ categories: threadpool
 >- `handler:` 超出线程范围和队列容量的处理程序。
 
 **看下ThreadPoolExecutor中一些比较重要的变量：**
+
 ```java
     /**
     * ctl是用来统计worker数量和线程池状态的，为了用一个int解决问题
@@ -72,6 +74,7 @@ categories: threadpool
     private final HashSet<Worker> workers = new HashSet<Worker>();
     
 ```
+
 **线程池的五种状态**
 >- `RUNNING:` 接收新的task。可处理**Queue**里的task。
 >- `SHUTDOWN:`不接收新的task，可处理**Queue**里的task。
@@ -84,6 +87,7 @@ categories: threadpool
 >- `第一种情况` 如果运行的**worker**线程少于 corePoolSize，则始终首选添加新的**worker**线程，而不插入到**Queue**中。
 >- `第二种情况` 如果运行的**worker**线程等于或多于 corePoolSize，则 始终首选将请求加入**Queue**中，而不添加新的**worker**线程。
 >- `第三种情况` 如果无法将请求加入**Queue**，则创建新的**worker**线程，除非创建此线程超出 maximumPoolSize，在这种情况下，任务将被拒绝。
+
 ```java
  public void execute(Runnable command) {
       if (command == null)
@@ -115,6 +119,7 @@ categories: threadpool
 
 >当出现第三种情况的时候，就是**Queue**被占满，这个时候我们会调用`reject(command)` ，这个方法会调用构造函数中传入的RejectedExecutionHandler对task进行处理，默认是抛出RejectedException。_(问题1)_
 >可以看到启动一个**worker**线程是通过`addWorker` 方法实现的，下面看下`addWorker` 方法的具体实现，
+
 ```java
     private boolean addWorker(Runnable firstTask, boolean core) {
         retry:
@@ -179,7 +184,9 @@ categories: threadpool
         return true;
     }
 ```
+
 > 通过`addWorker`代码,可以看到worker线程是**Worker**类来实现的，下面我们看下worker类的代码：
+
 ```java
     private final class Worker
         extends AbstractQueuedSynchronizer
@@ -222,6 +229,7 @@ categories: threadpool
         public boolean isLocked() { return isHeldExclusively(); }
     }
 ```
+
 > 可以看到**Worker**类是ThreadPoolExceutor的一个内部类，是继承AbstractQueuedSynchronizer实现的一个互斥锁类，AbstractQueuedSynchronizer的详细解说可以参考下面几篇文章：
 >- http://ifeve.com/introduce-abstractqueuedsynchronizer/
 >- http://ifeve.com/jdk1-8-abstractqueuedsynchronizer/
@@ -265,6 +273,7 @@ final void runWorker(Worker w) {
         }
     }
 ```
+
 > **`runWorker`**方法是轮训获取task，然后执行task的`run`方法，当程序获取task的值为null时，此**worker**线程就表示终止_(问题2)_。
 > 所以我们要让**worker**线程的生命周期的结束，只需要将`getTask()`的返回值设置为null就可以了，接下来我们看下`getTask()`的一些实现。
 
@@ -317,12 +326,15 @@ final void runWorker(Worker w) {
         }
     }
 ```
+
 > `getTask`是从**Queue**中获取task，可以看
+
 >```JAVA
 Runnable r = timed ?
                     workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
                     workQueue.take();
 ```
+
 >这段代码是根据用户是否设置了超时策略用不同的方法来从**Queue**中抓取task，简单说下`pool`与`take`的区别：
  >|           | 抛出异常      |    特殊值 | 阻塞  |超时|
  | :-------- | :-------- | --------:| :--: |
@@ -330,4 +342,6 @@ Runnable r = timed ?
  | 移除   remove()| poll()|   take()|  poll(time, unit)  |
  | 检查   element()|  peek()|   不可用 |不可用 |
 >`poll`是在固定时间如果没有则返回null，那么可以通过这个null来确定线程是否有闲置，是否需要回收部分**worker**线程。       
+
+    
 
