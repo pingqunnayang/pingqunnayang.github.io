@@ -49,3 +49,45 @@ body {
 .author a {
     color: #ee4444;
 }
+
+/**
+ * Code formatting
+ */
+pre{
+  font-size: 15px;
+  border-radius: 3px;
+  background-color: #000000;
+  color: #000000;
+}
+
+code {
+  padding: 1px 5px;
+}
+
+pre {
+  padding: 8px 12px;
+  overflow: auto; 
+
+  > code {
+    border: 0;
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+
+.article_manage {
+padding: 5px 0;
+color: #999;
+font: normal 12px/24px Arial;
+text-align: left;
+}
+
+table
+{
+ border-collapse:collapse; /* 关键属性：合并表格内外边框(其实表格边框有2px，外面1px，里面还有1px哦) */
+ border:solid #999; /* 设置边框属性；样式(solid=实线)、颜色(#999=灰) */
+ border-width:1px 0 0 1px; /* 设置边框状粗细：上 右 下 左 = 对应：1px 0 0 1px */
+} 
+table th{border:solid #999;border-width:0 1px 1px 0;padding:2px;}
+table td {border:solid #999;border-width:0 1px 1px 0;padding:2px;}
