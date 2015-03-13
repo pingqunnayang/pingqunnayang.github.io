@@ -8,7 +8,7 @@
         <div class="col-md-9">
           <div class="article">
             <div class="well">
-                <h1><a href="{{ site.baseurl}}{{ page.url }}">{{ page.title }}</a></h1>
+                <h1><a href="{{ site.baseurl}}{{ page.url }}">{{ page.title }}</a></h1>              
                 <div class="article_manage">
                     <span class="link_categories">
                     分类：
@@ -16,7 +16,8 @@
                      <a href="/showCategory.html?categoryName={{cat}}">{{ cat }}</a>&nbsp;
                     {% endfor %} 
                   </span>
-                  <span>{{ page.date | date: "%b %-d, %Y" }}</span>
+                  <span>{{ page.date | date: "%Y-%m-%d %H:%M" }}</span>
+                  <span style="border-bottom:2px dotted #0094ff;"><hr></span>
                 </div>
             <div class="post-content">
             {{ content }}

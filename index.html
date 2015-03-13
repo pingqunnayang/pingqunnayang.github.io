@@ -6,6 +6,8 @@ layout: default
 <div class="article">
     <div class="well">
         <h1><a href="{{ site.baseurl}}{{ post.url }}">{{ post.title }}</a></h1>
+        <span style="border-bottom:2px dotted #0094ff;"><hr></span>
+            <!--
             <div class="article_manage">
                 <span class="link_categories">
                 分类：
@@ -13,11 +15,16 @@ layout: default
                   <a href="/showCategory.html?categoryName={{cat}}">{{ cat }}</a>&nbsp;
                 {% endfor %} 
               </span>
-              <span>{{ post.date | date: "%b %-d, %Y" }}</span>
+              <span>{{ post.date | date: "%Y-%m-%d" }}</span>
             </div>
+          -->
         <div class="content">
             {{ post.content }}
         </div>
+        <div class="article_manage">
+         <span class="link_postdate">{{ post.date | date: "%Y-%m-%d" }}</span>
+         <span class="link_view" ><a href="{{ site.baseurl}}{{ post.url }}" title="阅读次数">阅读全文...</a></span>
+      </div>
     </div>
 </div>
 {% endfor %}

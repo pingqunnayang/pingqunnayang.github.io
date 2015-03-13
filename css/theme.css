@@ -80,7 +80,16 @@ pre {
 padding: 5px 0;
 color: #999;
 font: normal 12px/24px Arial;
-text-align: left;
+text-align: right;
+}
+
+.article_manage .link_categories {
+  float: left;
+}
+
+.article_manage .link_view {
+  padding: 0 0 0 14px;
+  background: url(/images/ico_view.png) no-repeat left center;
 }
 
 table
@@ -91,3 +100,8 @@ table
 } 
 table th{border:solid #999;border-width:0 1px 1px 0;padding:2px;}
 table td {border:solid #999;border-width:0 1px 1px 0;padding:2px;}
+
+.content {
+ height:280px; 
+ overflow:hidden
+}
