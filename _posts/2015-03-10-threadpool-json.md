@@ -388,15 +388,17 @@ Runnable r = timed ?
 
 
 线程池总共有5种状态，分别是
+
 - `RUNNING:` 接收新的task。可处理**Queue**里的task。
 - `SHUTDOWN:`不接收新的task，可处理**Queue**里的task。
 - `STOP:` 不接收新的task，不处理queue里的task，同时中断处理中的task。
 - `TIDYING:` 所有task都被终止，workercount=0，并执行terminated()方法。
 - `TERMINATED:` terminated()行完成。
+
 当用户创建一个线程池时，它的状态处于`RUNNING`,我们关注下**ThreadPoolExecutor**的两个shutdown方法
 
->-`shutdown` 按过去执行已提交任务的顺序发起一个有序的关闭，但是不接受新任务。
->-`shutdownNow` 尝试停止所有的活动执行任务、暂停等待任务的处理，并返回等待执行的任务列表。
+>- `shutdown` 按过去执行已提交任务的顺序发起一个有序的关闭，但是不接受新任务。
+>- `shutdownNow` 尝试停止所有的活动执行任务、暂停等待任务的处理，并返回等待执行的任务列表。
 
 `shutdown`方法是设置线程池的状态为SHUTDOWN状态，而`shutdownNow`是设置线程池的状态为STOP，我们看下两则的源码
 
