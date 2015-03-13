@@ -11,14 +11,15 @@
                 <h1><a href="{{ site.baseurl}}{{ page.url }}">{{ page.title }}</a></h1>              
                 <div class="article_manage">
                     <span class="link_categories">
-                    分类：
+                    分类:
                      {% for cat in page.categories %}
-                     <a href="/showCategory.html?categoryName={{cat}}">{{ cat }}</a>&nbsp;
+                      <a href="/showCategory.html?categoryName={{cat}}">{{ cat }}</a>
                     {% endfor %} 
                   </span>
-                  <span>{{ page.date | date: "%Y-%m-%d %H:%M" }}</span>
-                  <span style="border-bottom:2px dotted #0094ff;"><hr></span>
+                  &nbsp;&nbsp;时间:
+                  <span>{{ page.date | date: "%Y-%m-%d" }}</span>
                 </div>
+            <span style="border-bottom:2px dotted #0094ff;"><hr></span>
             <div class="post-content">
             {{ content }}
             <div>

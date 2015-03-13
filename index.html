@@ -6,25 +6,28 @@ layout: default
 <div class="article">
     <div class="well">
         <h1><a href="{{ site.baseurl}}{{ post.url }}">{{ post.title }}</a></h1>
-        <span style="border-bottom:2px dotted #0094ff;"><hr></span>
-            <!--
-            <div class="article_manage">
+           <div class="article_manage">
                 <span class="link_categories">
-                分类：
+                分类:
                  {% for cat in post.categories %}
-                  <a href="/showCategory.html?categoryName={{cat}}">{{ cat }}</a>&nbsp;
+                  <a href="/showCategory.html?categoryName={{cat}}">{{ cat }}</a>
                 {% endfor %} 
               </span>
+              &nbsp;&nbsp;时间:
               <span>{{ post.date | date: "%Y-%m-%d" }}</span>
-            </div>
-          -->
+        </div>
+        <span style="border-bottom:2px dotted #0094ff;"><hr></span>
         <div class="content">
-            {{ post.content }}
+          {% if post.content contains "<!-- more -->" %}
+            {{ post.content | split:"<!-- more -->" | first % }}
+          {% else %}
+            {{ post.content | strip_html | truncatewords:100 }}
+          {% endif %}
         </div>
         <div class="article_manage">
-         <span class="link_postdate">{{ post.date | date: "%Y-%m-%d" }}</span>
-         <span class="link_view" ><a href="{{ site.baseurl}}{{ post.url }}" title="阅读次数">阅读全文...</a></span>
-      </div>
+           <span class="link_view" ><a href="{{ site.baseurl}}{{ post.url }}" title="阅读次数">阅读全文...</a></span>
+        </div>
+
     </div>
 </div>
 {% endfor %}

@@ -1,7 +1,7 @@
 # Jekyll configuration
 
-name: My blog
-description: A jekyll theme
+name: 仰望星空
+description: My blog
 
 # url is currently only used only for the RSS feed in feed.xml
 url: http://pingqunnayang.github.io/
@@ -26,7 +26,7 @@ disqus: ''
 comments: true
 
 permalink: /:year/:month/:title
-paginate: 3
+paginate: 8
 
 markdown: redcarpet
 redcarpet:
