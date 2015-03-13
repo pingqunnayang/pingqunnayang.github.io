@@ -84,6 +84,7 @@ categories: JAVA
 
 **执行过程：**
 > 调用ThreadPoolExecutor.`execute(Runnable)`来提交一个线程到线程池中，线程池会根据当前的**Worker**线程数和**Queue**中的容量来确定操作，有以下三种情况：
+
 >- `第一种情况` 如果运行的**worker**线程少于 corePoolSize，则始终首选添加新的**worker**线程，而不插入到**Queue**中。
 >- `第二种情况` 如果运行的**worker**线程等于或多于 corePoolSize，则 始终首选将请求加入**Queue**中，而不添加新的**worker**线程。
 >- `第三种情况` 如果无法将请求加入**Queue**，则创建新的**worker**线程，除非创建此线程超出 maximumPoolSize，在这种情况下，任务将被拒绝。
