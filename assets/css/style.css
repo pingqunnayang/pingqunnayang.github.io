@@ -225,6 +225,9 @@ text-align: left;
 	 width: 18%;
 }
 
+article {
+   padding: 0 0 0; 
+}
 /**
 article{
   border:#909090 1px solid;background:#fff;color:#333;
