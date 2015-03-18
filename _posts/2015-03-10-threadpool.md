@@ -77,19 +77,21 @@ categories: JAVA
     
 ```
 
-**线程池的五种状态**
->- `RUNNING:` 接收新的task。可处理**Queue**里的task。
->- `SHUTDOWN:`不接收新的task，可处理**Queue**里的task。
->- `STOP:` 不接收新的task，不处理queue里的task，同时中断处理中的task。
->- `TIDYING:` 所有task都被终止，workercount=0，并执行terminated()方法。
->- `TERMINATED:` terminated()行完成。
+**线程池的五种状态:**
+
+- `RUNNING:` 接收新的task。可处理**Queue**里的task。
+- `SHUTDOWN:`不接收新的task，可处理**Queue**里的task。
+- `STOP:` 不接收新的task，不处理queue里的task，同时中断处理中的task。
+- `TIDYING:` 所有task都被终止，workercount=0，并执行terminated()方法。
+- `TERMINATED:` terminated()行完成。
 
 **执行过程：**
-> 调用ThreadPoolExecutor.`execute(Runnable)`来提交一个线程到线程池中，线程池会根据当前的**Worker**线程数和**Queue**中的容量来确定操作，有以下三种情况：
 
->- `第一种情况` 如果运行的**worker**线程少于 corePoolSize，则始终首选添加新的**worker**线程，而不插入到**Queue**中。
->- `第二种情况` 如果运行的**worker**线程等于或多于 corePoolSize，则 始终首选将请求加入**Queue**中，而不添加新的**worker**线程。
->- `第三种情况` 如果无法将请求加入**Queue**，则创建新的**worker**线程，除非创建此线程超出 maximumPoolSize，在这种情况下，任务将被拒绝。
+调用ThreadPoolExecutor.`execute(Runnable)`来提交一个线程到线程池中，线程池会根据当前的**Worker**线程数和**Queue**中的容量来确定操作，有以下三种情况：
+
+- `第一种情况` 如果运行的**worker**线程少于 corePoolSize，则始终首选添加新的**worker**线程，而不插入到**Queue**中。
+- `第二种情况` 如果运行的**worker**线程等于或多于 corePoolSize，则 始终首选将请求加入**Queue**中，而不添加新的**worker**线程。
+- `第三种情况` 如果无法将请求加入**Queue**，则创建新的**worker**线程，除非创建此线程超出 maximumPoolSize，在这种情况下，任务将被拒绝。
 
 ```java
  public void execute(Runnable command) {
@@ -120,8 +122,8 @@ categories: JAVA
    }
 ```
 
->当出现第三种情况的时候，就是**Queue**被占满，这个时候我们会调用`reject(command)` ，这个方法会调用构造函数中的RejectedExecutionHandler对task进行处理，默认抛出RejectedExecutionException。_(问题1)_
->启动一个**worker**线程是通过`addWorker` 方法实现的，下面是`addWorker` 方法的具体实现：
+当出现第三种情况的时候，就是**Queue**被占满，这个时候我们会调用`reject(command)` ，这个方法会调用构造函数中的RejectedExecutionHandler对task进行处理，默认抛出RejectedExecutionException。_(问题1)_
+启动一个**worker**线程是通过`addWorker` 方法实现的，下面是`addWorker` 方法的具体实现：
 
 ```java
     private boolean addWorker(Runnable firstTask, boolean core) {
@@ -188,7 +190,7 @@ categories: JAVA
     }
 ```
 
-> 通过`addWorker`代码,可以看到worker线程是new一个**Worker类**来实现的，下面我们看下**Worker类**的代码：
+通过`addWorker`代码,可以看到worker线程是new一个**Worker类**来实现的，下面我们看下**Worker类**的代码：
 
 ```java
     private final class Worker
@@ -233,12 +235,12 @@ categories: JAVA
     }
 ```
 
-> **Worker**类是ThreadPoolExceutor的一个内部类，是继承AbstractQueuedSynchronizer实现的一个互斥锁类，AbstractQueuedSynchronizer的详细解说可以参考下面几篇文章：
+**Worker**类是ThreadPoolExceutor的一个内部类，是继承AbstractQueuedSynchronizer实现的一个互斥锁类，AbstractQueuedSynchronizer的详细解说可以参考下面几篇文章：
 
->- http://ifeve.com/introduce-abstractqueuedsynchronizer/
->- http://ifeve.com/jdk1-8-abstractqueuedsynchronizer/
+- http://ifeve.com/introduce-abstractqueuedsynchronizer/
+- http://ifeve.com/jdk1-8-abstractqueuedsynchronizer/
 
-> **Worker**类的`run() `方法的执行体是调用了`runWorker`方法，下面我们看下`runWorker`方法的实现：
+**Worker**类的`run() `方法的执行体是调用了`runWorker`方法，下面我们看下`runWorker`方法的实现：
 
 ```JAVA
 final void runWorker(Worker w) {
@@ -279,11 +281,12 @@ final void runWorker(Worker w) {
     }
 ```
 
-> **`runWorker`**方法是轮训获取task，然后执行task的`run`方法，当程序获取task的值为null时，此**worker**线程就表示终止_(问题2)_。
-> 所以我们要让**worker**线程的生命周期的结束，只需要将`getTask()`的返回值设置为null就可以了，接下来我们看下`getTask()`的一些实现。
+**`runWorker`**方法是轮训获取task，然后执行task的`run`方法，当程序获取task的值为null时，此**worker**线程就表示终止_(问题2)_。
+所以我们要让**worker**线程的生命周期的结束，只需要将`getTask()`的返回值设置为null就可以了，接下来我们看下`getTask()`的一些实现。
 
-> **钩子 (hook) 方法**
- >可重写的 beforeExecute(java.lang.Thread, java.lang.Runnable) 和 afterExecute(java.lang.Runnable, java.lang.Throwable) 方法，这两种方法分别在执行每个任务之前和之后调用。
+**钩子 (hook) 方法：**
+
+ 可重写的 beforeExecute(java.lang.Thread, java.lang.Runnable) 和 afterExecute(java.lang.Runnable, java.lang.Throwable) 方法，这两种方法分别在执行每个任务之前和之后调用。
 
 ```java
     private Runnable getTask() {
@@ -332,7 +335,7 @@ final void runWorker(Worker w) {
     }
 ```
 
-> `getTask`是从**Queue**中获取task，可以看
+`getTask`是从**Queue**中获取task，可以看
 
 ```JAVA
 Runnable r = timed ?
@@ -340,8 +343,8 @@ Runnable r = timed ?
                     workQueue.take();
 ```
 
->这段代码是根据用户设置的超时策略来用不同的方式从**Queue**中抓取task，简单说下`pool`与`take`的区别：
-><table>
+这段代码是根据用户设置的超时策略来用不同的方式从**Queue**中抓取task，简单说下`pool`与`take`的区别：
+<table>
     <tr>
          <td></td>
          <td>抛出异常</td>
@@ -372,10 +375,10 @@ Runnable r = timed ?
   </tr>
 </table>
 
->`poll`是在固定时间如果没有则返回null，那么可以通过这个null来确定线程是否有闲置，是否需要回收**worker**线程。
-> 在getTask期间如果出现中断异常，会设置timeOut为false重试外层循环，所以InterruptedException不会对getTask方法造成任何影响，真正能影响getTask方法的是ctl状态的转变 。     
+`poll`是在固定时间如果没有则返回null，那么可以通过这个null来确定线程是否有闲置，是否需要回收**worker**线程。
+在getTask期间如果出现中断异常，会设置timeOut为false重试外层循环，所以InterruptedException不会对getTask方法造成任何影响，真正能影响getTask方法的是ctl状态的转变 。     
 
-整个线程池执行一个任务的流程就结束了，那么上面的几个问题也都有答案了
+整个线程池执行一个任务的流程就结束了，那么上面的几个问题也都有答案了。
 >-  `Queue的大小如何限制，Queue满了怎么处理？`
 
 **Queue**的类型是通过构造函数传入的，所以**Queue**的容量与用户传入的队列有关，我们可以通过查看BlockingQueue的实现类来寻找满足自己的**Queue**，当**Queue**满了后怎么处理？如果是无界队列，那么就会直接到`out of memory`，有界队列会调用构造函数传入的**RejectedExecutionHandler**进行处理。
@@ -400,8 +403,8 @@ Runnable r = timed ?
 
 当用户创建一个线程池时，它的状态处于`RUNNING`,我们关注下**ThreadPoolExecutor**的两个shutdown方法
 
->- `shutdown` 按过去执行已提交任务的顺序发起一个有序的关闭，但是不接受新任务。
->- `shutdownNow` 尝试停止所有的活动执行任务、暂停等待任务的处理，并返回等待执行的任务列表。
+- `shutdown` 按过去执行已提交任务的顺序发起一个有序的关闭，但是不接受新任务。
+- `shutdownNow` 尝试停止所有的活动执行任务、暂停等待任务的处理，并返回等待执行的任务列表。
 
 `shutdown`方法是设置线程池的状态为SHUTDOWN状态，而`shutdownNow`是设置线程池的状态为STOP，我们看下两则的源码
 
@@ -445,8 +448,8 @@ Runnable r = timed ?
         return tasks;
     }
 ```
->`shutdown`是调用`interruptIdleWorkers`，而`shutdownNow`是调用`interruptWorkers`,`shutdown`需要获取**worker**线程的锁才做interrupt操作，这样可以保证**Worker**线程处理完**Queue**中剩余的task，**Queue**中task全部完成后，会调用`decrementWorkerCount`方法移除**Worker**线程，@see `getTask`方法。
->在`shutdown`和`shutdownNow`方法中都调用了`tryTerminate`方法,这个方法将使线程进入过渡状态TIDYING,并且最终变为TERMINATED状态。
+`shutdown`是调用`interruptIdleWorkers`，而`shutdownNow`是调用`interruptWorkers`,`shutdown`需要获取**worker**线程的锁才做interrupt操作，这样可以保证**Worker**线程处理完**Queue**中剩余的task，**Queue**中task全部完成后，会调用`decrementWorkerCount`方法移除**Worker**线程，@see `getTask`方法。
+在`shutdown`和`shutdownNow`方法中都调用了`tryTerminate`方法,这个方法将使线程进入过渡状态TIDYING,并且最终变为TERMINATED状态。
 
 ```java
  final void tryTerminate() {
@@ -481,7 +484,7 @@ Runnable r = timed ?
         }
     }
 ```
-> `tryTerminate()`状态为STOP,或者状态为SHUTDOWN且任务队列为空时会终止线程池，调用了`terminated`方法后，线程池的状态就变为TERMINATED，**Worker**线程为0，**Queue**中的数据为null，线程池生命周期完成！
+`tryTerminate()`状态为STOP,或者状态为SHUTDOWN且任务队列为空时会终止线程池，调用了`terminated`方法后，线程池的状态就变为TERMINATED，**Worker**线程为0，**Queue**中的数据为null，线程池生命周期完成！
 
 
     

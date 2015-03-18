@@ -1,27 +1,44 @@
-<div class="sidebar well">
-    <div><img src="/images/mine.jpg"></div>
-    痛苦是必然的，磨烂是可选的
-</div>
+<! -- sidebar.html -->
+<header class="sidebar-header" role="banner">
+	<a href="{{ site.BASE_PATH }}/">
+		<img src="/images/mine.jpg" class="img-circle" />
+	</a>
+	<h3 class="title">
+        <a href="{{ site.BASE_PATH }}/">{{ site.title }}</a>
+    </h3>
+</header>
 
-<div class='sidebar well category'>
-    <h1>文章分类</h1>
-	<ul>
-    {% for category in site.categories %}  
-        <li class="category_list_item"><a href="/showCategory.html?categoryName={{ category | first }}">{{ category | first }}</a> ({{ category | last | size }})  
-        </li>  
-    {% endfor %}  
+{% if site.author.bio %}
+<div id="bio" class="text-center">
+	{{ site.author.bio }}
+</div>
+{% endif %}
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		{% if site.author.github %}
+		<li>
+			<a class="btn btn-default btn-sm" href="https://github.com/{{ site.author.github }}">
+				<i class="fa fa-github-alt fa-lg"></i>
+			</a>
+		</li>
+		{% endif %}
+		{% if site.author.weibo %}
+		<li>
+			<a class="btn btn-default btn-sm" href="http://weibo.com/{{ site.author.weibo }}">
+				<i class="fa fa-weibo fa-lg"></i>
+			</a>
+		</li>
+		{% endif %}
+		{% if site.author.email %}
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:{{ site.author.email }}">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		{% endif %}
 	</ul>
 </div>
 
-<div class="sidebar well">
-    <h1>最新文章</h1>
-    <ul>
-        {% for post in site.posts limit:5 %}
-          <li><a href="{{ site.baseurl}}{{ post.url }}">{{ post.title }}</a></li>
-        {% endfor %}
-    </ul>
-</div>
 
-<div class="sidebar well">
-{% include links-list.html %}
-</div>
+<! -- sidebar.html end -->
