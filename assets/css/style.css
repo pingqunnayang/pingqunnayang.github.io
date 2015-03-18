@@ -220,6 +220,11 @@ text-align: left;
   border-top: 1px solid #eee;
 }
 
+.col-sm-3{
+	 margin-top: 25px; 
+	 width: 18%;
+}
+
 /**
 article{
   border:#909090 1px solid;background:#fff;color:#333;
