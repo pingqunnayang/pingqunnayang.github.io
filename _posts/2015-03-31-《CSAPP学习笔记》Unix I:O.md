@@ -58,6 +58,7 @@ fd=open(path，O_RDWR|O_CREAT|O_TRUNC,model)
 ```
 
 > 》**关闭文件close函数**
+
 ```c
 /*成功则返回0，出错返回-1*/
 int close(int fd)
@@ -100,10 +101,10 @@ ssize_t write(int fd,const void *buf,size_t nbytes);
 - **v-node表**：每个打开的文件（或设备）都有一个V节点结构，V节点包括了文件类型和对此文件进行各种操作函数的指针。
 `linux没有使用V节点，而是使用了通用i节点结构，虽然实现有所不同，但是在概念上，v节点与i节点是一样的。`
 
-![Alt text](./1427724473439.png)
+![Alt text](/images/20150331-1.png)
 图中进程表中的文件描述符标志和文件表的文件状态标志是有区别的，前者只用于一个进程的描述符，后者则应用于指向该给定文件表项的任何进程中的所有描述符。
 下图是子进程继承父进程的关系图，可以看到文件表的refcnt=2，因为文件表关联了2个进程。
-![Alt text](./1427807106264.png)
+![Alt text](/images/20150331-2.png)
 
 > 》**其他函数**
 
@@ -124,4 +125,4 @@ void sync(void);
 
 &#160; &#160; &#160; &#160;UNIX I/O是操作系统内核实现的，应用程序可以通过open、close、lseek、read、write这样的函数访问UNIX I/O,较高级别的RIO和标准I/O函数都是基于UNIX I/O函数实现的。
 
-![Alt text](./1427809849996.png)
+![Alt text](/images/20150331-3.png)
