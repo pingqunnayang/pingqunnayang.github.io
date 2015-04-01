@@ -36,3 +36,4 @@ categories_path: categories.html
 tags_path: tags.html
 
 BASE_PATH:
+permalink: /:title.html
