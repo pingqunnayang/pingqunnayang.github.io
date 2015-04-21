@@ -1,39 +1,44 @@
-# visit https://github.com/mojombo/jekyll/wiki/Configuration for more settings
-
-url: http:/zhipingxiao.cn
-
-paginate: 10 # pagination based on number of posts
-paginate_path: "page:num"
-
-highlighter: pygments
+permalink: /:year/:month/:day/:title.html
+paginate: 10
 markdown: redcarpet
-redcarpet:
-  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
 
-exclude: ['README.md', 'LICENSE']
+# 作者信息
+author: 
+  name: pipin Xiao
+  email: pingqunnayang@gmail.com
+  link: http://zhipingxiao.cn
+  weibo: http://weibo.com/zhipingxiao
+  github: https://github.com/pingqunnayang
 
+# 站点信息
+title: 肖志平的博客
+description: My personal blog
+url: http://zhipingxiao.cn
+rss_url: /pages/atom.xml
 
+# gavatar头像及Favicon
+gavatar: /public/img/title.png
+favicon: /public/img/title.png
 
-defaults:
-  -
-    scope:
-      path: "" # empty string for all files
-    values:
-      title: zhipingxiao
+# google analytics 设置
+#ga:
+# id: UA-54262064-1 
+#url: painterlin.com
 
-description: zhipingxiao's blog
-author:
-  name: zhipingxiao
-  email: nanapingping@163.com
-  github: pingqunnayang 
-  weibo: zhipingxiao
-  pinterest: asd123
-  linkedin: asd123
-  bio: 痛苦是必然的. 磨烂是可选的.
+# disqus 设置
+duosuo:
+  shortname: pingqunnayang
 
-rss_path: feed.xml
-categories_path: categories.html
-tags_path: tags.html
+# 主题设置，自动激活某个标签
+active: 读书
 
-BASE_PATH:
-permalink: /:title.html
+# 首页除了最新文章外显示分类
+cates: 
+  - Java
+
+# 中文本地化
+locals:
+  tags: 标签
+  about: 关于
+  newest: 最新文章
+  archive: 归档
