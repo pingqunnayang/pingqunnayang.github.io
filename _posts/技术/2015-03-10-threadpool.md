@@ -7,6 +7,7 @@ category: 技术
 tags: Thread Java
 description:
 ---
+###1.1 简介
 之前项目中很多地方用到线程池，线程池的好处：
 >- 可以控制系统中线程的数量，根据系统的性能要求调整线程的数目。
 >- 减少创建和销毁线程的次数，提高服务器的工作效率。
@@ -19,12 +20,12 @@ description:
 
 <!-- more -->
 
-上图是线程池的一种实现，类似于生产者/消费者模型，那么要设计一套这样的实现我们需要关注`哪些问题`？
+上图是线程池的一种实现，类似于生产者/消费者模型，设计一套这样的实现我们需要关注`几个问题`？
 >-  **Queue**的大小如何限制，**Queue**满了怎么处理？
 >-  **Worker**线程的生命周期怎么控制？**worker**如何创建、销毁?
 >-  **线程池**的生命周期如何控制？如何关闭线程池？
-
-带着问题我们来看下java.util.concurrent.**ThreadPoolExecutor**是如何实现线程池的？**ThreadPoolExecutor**是ExecutorService的默认实现，**ThreadPoolExecutor**的构造函数如下：
+###1.2 ThreadPoolExecutor
+我们看下java.util.concurrent.**ThreadPoolExecutor**是如何实现线程池的？**ThreadPoolExecutor**是ExecutorService的默认实现，**ThreadPoolExecutor**的构造函数如下：
 
 ```java
     public ThreadPoolExecutor(int corePoolSize,
@@ -58,11 +59,11 @@ description:
 - `threadFactory:`  创建**worker**线程的工程。
 - `handler:` 超出线程范围和队列容量的处理程序。
 
-**看下ThreadPoolExecutor中一些比较重要的变量：**
+ThreadPoolExecutor中还有一些比较重要的变量：
 
 ```java
     /**
-    * ctl是用来统计worker数量和线程池状态的，为了用一个int解决问题
+    * ctl是用来统计worker数量和线程池状态的，用一个int解决了问题
     * workerCount 用低29位，最大worker数量是(2^29)-1
     * runState 使用高3位 状态值如下：
     **/
@@ -88,13 +89,12 @@ description:
 - `TIDYING:` 所有task都被终止，workercount=0，并执行terminated()方法。
 - `TERMINATED:` terminated()行完成。
 
-**执行过程：**
-
-调用ThreadPoolExecutor.`execute(Runnable)`来提交一个线程到线程池中，线程池会根据当前的**Worker**线程数和**Queue**中的容量来确定操作，有以下三种情况：
+###1.2 执行过程
+&nbsp; &nbsp; &nbsp; &nbsp;使用ThreadPoolExecutor.`execute(Runnable)`来提交一个线程到线程池中，线程池会根据当前的**Worker**的线程数和**Queue**中的容量来确定操作，有以下三种情况：
 
 - `第一种情况` 如果运行的**worker**线程少于 corePoolSize，则始终首选添加新的**worker**线程，而不插入到**Queue**中。
 - `第二种情况` 如果运行的**worker**线程等于或多于 corePoolSize，则 始终首选将请求加入**Queue**中，而不添加新的**worker**线程。
-- `第三种情况` 如果无法将请求加入**Queue**，则创建新的**worker**线程，除非创建此线程超出 maximumPoolSize，在这种情况下，任务将被拒绝。
+- `第三种情况` 如果无法将请求加入**Queue**，则创建新的**worker**线程，除非创建此线程超出 maximumPoolSize，在这种情况下，任务可能被拒绝。
 
 ```java
  public void execute(Runnable command) {
@@ -103,20 +103,20 @@ description:
        int c = ctl.get();
        /**第一种情况*/
        if (workerCountOf(c) < corePoolSize) {
-           if (addWorker(command, true))
+           if (addWorker(command, true)) //创建一个worker线程
                return;
            c = ctl.get();
        }
        /**
         *第二种情况，此处需要做一次double check，因为你插入到queue的时候
-        *有可能线程池已经shutdown或者没有worker线程监听了，
+        *有可能线程池已经stop了或者没有worker线程监听了，
         *所以需要check线程池的状态和wokerCount的值。
         */
        if (isRunning(c) && workQueue.offer(command)) {
            int recheck = ctl.get();
            if (! isRunning(recheck) && remove(command))
                reject(command);
-           else if (workerCountOf(recheck) == 0)
+           else if (workerCountOf(recheck) == 0) //没有worker线程则新建一个worker线程
                addWorker(null, false);
        }
        /**第三种情况*/
@@ -125,8 +125,8 @@ description:
    }
 ```
 
-当出现第三种情况的时候，就是**Queue**被占满，这个时候我们会调用`reject(command)` ，这个方法会调用构造函数中的RejectedExecutionHandler对task进行处理，默认抛出RejectedExecutionException。_(问题1)_
-启动一个**worker**线程是通过`addWorker` 方法实现的，下面是`addWorker` 方法的具体实现：
+&nbsp; &nbsp; &nbsp; &nbsp;当出现第三种情况的时候，表示**Queue**满了，这时我们会调用`reject(command)` ，此方法会调用构造函数中的RejectedExecutionHandler对task进行处理，默认抛出RejectedExecutionException。
+&nbsp; &nbsp; &nbsp; &nbsp;代码是通过调用`addWorker`来创建一个新的worker线程，下面是`addWorker` 方法的具体实现：
 
 ```java
     private boolean addWorker(Runnable firstTask, boolean core) {
@@ -144,7 +144,7 @@ description:
             for (;;) {
                 int wc = workerCountOf(c);
                 if (wc >= CAPACITY ||
-                    wc >= (core ? corePoolSize : maximumPoolSize))
+                    wc >= (core ? corePoolSize : maximumPoolSize)) //确定线程数目是否超标
                     return false;
                 if (compareAndIncrementWorkerCount(c))
                     break retry;
@@ -155,7 +155,7 @@ description:
         }
         /**上面的一段是通过CAS来对workerCount++操作，需要处理线程池状态关闭的情况*/
         
-        //开始创建新的worker线程
+        //创建新的worker线程
         Worker w = new Worker(firstTask);
         Thread t = w.thread;
         
@@ -168,7 +168,7 @@ description:
             if (t == null ||
                 (rs >= SHUTDOWN &&
                  ! (rs == SHUTDOWN &&
-                    firstTask == null))) {
+                    firstTask == null))) { //确定线程池是否关闭了
                 decrementWorkerCount();
                 tryTerminate();
                 return false;
@@ -183,8 +183,8 @@ description:
         }
         /**worker线程启动*/
         t.start();
-        /**处处都需要考虑线程池的状态变化，当线程加入到workers中
-         *还没有启动，此时状态变为stop，会导致当前线程未interrupt
+        /**处处都需要考虑线程池的状态变化，当线程加入到workers中还没有启动，
+         * 线程池的状态就变为stop，会导致当前线程未interrupt
          */
         if (runStateOf(ctl.get()) == STOP && ! t.isInterrupted())
             t.interrupt();
@@ -193,7 +193,7 @@ description:
     }
 ```
 
-通过`addWorker`代码,可以看到worker线程是new一个**Worker类**来实现的，下面我们看下**Worker类**的代码：
+`addWorker`方法的代码告诉我们worker线程是new一个**Worker类**来实现的，下面我们看下**Worker类**的代码：
 
 ```java
     private final class Worker
@@ -261,7 +261,7 @@ final void runWorker(Worker w) {
                     beforeExecute(w.thread, task);
                     Throwable thrown = null;
                     try {
-                        task.run();
+                        task.run(); //执行提交线程的run方法
                     } catch (RuntimeException x) {
                         thrown = x; throw x;
                     } catch (Error x) {
@@ -324,7 +324,7 @@ final void runWorker(Worker w) {
             }
 
             try {
-                //OLL是带超时获取，take是阻塞获取
+                //Poll是带超时获取，take是阻塞获取
                 Runnable r = timed ?
                     workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
                     workQueue.take();
@@ -382,6 +382,8 @@ Runnable r = timed ?
 在getTask期间如果出现中断异常，会设置timeOut为false重试外层循环，所以InterruptedException不会对getTask方法造成任何影响，真正能影响getTask方法的是ctl状态的转变 。     
 
 整个线程池执行一个任务的流程就结束了，那么上面的几个问题也都有答案了。
+
+###1.3结论
 
 -  `Queue的大小如何限制，Queue满了怎么处理？`
 
