@@ -35,7 +35,8 @@ description:
 ```c
 /* 成功返回0，出错返回-1 */
 int bind(int sockfd,const struct sockaddr *ddr,socklen_t len)
-``
+```
+
 &nbsp; &nbsp; &nbsp; &nbsp;一个地址标识一个特定通信域的套接字端点，地址的格式与这个特定的通讯域相关，为了使不同格式的地址能够传入到函数，地址会强制转换成一个通用的地址结构sockaddr，套字节可以自由地添加额外的成员并且定义sa_data成员的大小。
 
 ```c
