@@ -381,6 +381,6 @@ protected final boolean tryRelease(int releases) {
 
 
 
-> - 参考连接
->-  AbstractQueuedSynchronizer的实现分析（上）http://ifeve.com/jdk1-8-abstractqueuedsynchronizer/
->-  java锁的种类以及辨析  http://ifeve.com/java_lock_see1/
+> - 参考资料
+>-  AbstractQueuedSynchronizer的实现分析（上）<a href="http://ifeve.com/jdk1-8-abstractqueuedsynchronizer/">http://ifeve.com/jdk1-8-abstractqueuedsynchronizer/</a>
+>-  java锁的种类以及辨析  <a href="http://ifeve.com/java_lock_see1/">http://ifeve.com/java_lock_see1/</a>
