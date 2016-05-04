@@ -7,7 +7,7 @@ category: 技术
 tags: Error exception
 description:
 ---
-##### 1.Nginx缓存文件夹proxy_temp问题
+### 1.Nginx缓存文件夹proxy_temp问题
 
 **描述**：
 
@@ -22,7 +22,7 @@ description:
 ```
 >日志中发现是nginx的权限问题报错,让OP君帮忙修改了proxy_temp的权限，访问正常，谷歌后发现nginx有一项配置proxy_temp_file_write_size来设置缓存文件夹大小，当你的文件超过该参数设置的大小时，nginx会先将文件写入临时目录(缺省为nginx安装目下/proxy_temp目录)，op之前启动nginx用ruser，后面修改为suer启动，proxy_temp没有修改导致suer没有权限写入proxy_temp，再加上我们分享之前用H5格式文件比较小，升级后PDF文件比较大，所以抛错，`为什么抛错后前端返回状态还是200？还需要调研。`
 
-##### 2.tomcat启动项目报jdk版本错误
+### 2.tomcat启动项目报jdk版本错误
 
 **描述**：
 
