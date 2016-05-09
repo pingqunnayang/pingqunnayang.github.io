@@ -60,3 +60,28 @@ Using CLASSPATH:       /home/liqianqian/android/apache-tomcat-7.0.55/bin/bootstr
 #                   
 ```
 如果服务器配置了JAVA\_HOME和JRE\_HOME环境变量，优先使用JRE\_HOME，查看服务器发现新服务器的JRE_HOME指向jdk1.6，修改了tomcat的配置问题解决。
+
+### 3.Kafka 副本offsetoutofrangeexception
+
+>**描述**：
+
+<p style="text-indent: 2em">发现项目每天报警的邮件没有发出来，邮件是通过kafka传送消息的，第一时间查看kafka manager，发现kafka集群brokers少了49这台集群，而我的alarm之前只分配了一个partition，正好leader是49这台集群导致alarm没有数据。
+
+>**解决步骤**：
+
+<p style="text-indent: 2em">第一时间查看kafka的server.log,发现在不停报下面错误：
+
+```powershell
+[2016-05-09 09:59:59,997] ERROR [Replica Manager on Broker 49]: Error when processing fetch request for partition [dubbo_service,2] offset 1921401561 from consumer with correlation id 100013061. Possible cause: Request for offset 1921401561 but we only have log segments in the range 1925414437 to 1933531719. (kafka.server.ReplicaManager)
+[2016-05-09 09:59:59,998] ERROR [Replica Manager on Broker 49]: Error when processing fetch request for partition [dubbo_service,2] offset 1921401561 from consumer with correlation id 100013062. Possible cause: Request for offset 1921401561 but we only have log segments in the range 1925414437 to 1933531719. (kafka.server.ReplicaManager)
+[2016-05-09 09:59:59,999] ERROR [Replica Manager on Broker 49]: Error when processing fetch request for partition [dubbo_service,2] offset 1921401561 from consumer with correlation id 100013063. Possible cause: Request for offset 1921401561 but we only have log segments in the range 1925414437 to 1933531719. (kafka.server.ReplicaManager)
+[ruser@IP-25-49 ~]$ 
+```
+发现是slave在同步master报错，google了一把，发现是kafka的一个bug。<br>
+大致是说某个Wrtier(W1)开始写数据，它对日志只有写锁，未锁定读。若线程W1将日志已经append到log中，但未更新nextOffset，此时被其它线程取得运行权。假设此时offset为100，nextOffset为101；<br>
+此时副本的一个Reader(R1)过来读数据，它之前已经读到100了，所以请求nextOffset为101, leader发现有offset为101的数据，所以正确返回数据；
+然后副本的下一个Reader(R2)来继续读数据，它已经读取到101了，所以请求102，但在leader中，由于nextOffset未更新，它认为102已经超出它当前的100的offset了，所以出现OffsetOutOfRange异常。kafka认为副本已经损坏，删除副本数据，从leader重传；<br>
+W1线程继续执行，更新nextOffset到102，但已经太迟了，异常已经出现。<br>
+参考链接：http://www.lujinhong.com/Kafka-%E5%89%AF%E6%9C%ACOffsetOutOfRangeException.html
+
+
