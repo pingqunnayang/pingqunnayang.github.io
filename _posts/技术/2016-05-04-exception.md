@@ -85,3 +85,10 @@ W1线程继续执行，更新nextOffset到102，但已经太迟了，异常已�
 参考链接：http://www.lujinhong.com/Kafka-%E5%89%AF%E6%9C%ACOffsetOutOfRangeException.html
 
 
+### 4.Maven deploy返回400异常
+
+<p style="text-indent: 2em">上传jar包到公司私服，发现一直报`Return code is: 400, ReasonPhrase: Bad Request`错误，排查了很久也没发现问题，后来google发现nexus的repository分三种类型：Hosted、Proxy和Virtual，另外还有一个repository group(仓库组)用于对多个仓库进行组合。部署的时候只能部署到Hosted类型的仓库中，如果是其他类型就会出现这个400错误。
+
+![Alt text](/public/img/technology/exception-1.png)
+
+之前一直配置public snapshots，其实应该配置红框那个地址，这个才是hosted类型的仓库。
