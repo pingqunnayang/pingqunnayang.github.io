@@ -26,14 +26,14 @@ description:
 1. 服务器可以直接用ssh root@公网IP登录到控制台，也可以web界面登录。
 2. 登录以后开始安装shadowsocks，直接执行下面指令。
 
-```powershell
+```java
 yum install python-pip
 pip install shadowsocks
 ```
 
 3. 安装完成后开始配置shadowsocks，在/root/ss目录下创建ssserver.json文件，内容如下：
 
-```powershell
+```java
 {
 "server":"0.0.0.0",  //此处不要写阿里云的外网IP，写0.0.0.0
 "server_port":7777,  //阿里云限制了端口，在阿里云安全配置界面里面把7777端口加上
@@ -46,7 +46,7 @@ pip install shadowsocks
 
 4. 构建完成后执行下面命令启动和关闭，启动后可以在/var/log/shadowsocks.log下面查看日志。
 
-```powershell
+```java
 ssserver -c /root/ss/ssserver.json -d stop    //关闭
 ssserver -c /root/ss/ssserver.json -d start  //启动
 netstat -antlp | grep 7777  //确定服务是否启动了
